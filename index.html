@@ -129,3 +129,51 @@
     <script src="script.js"></script>
 </body>
 </html>
+<form id="formContato">
+    <input type="text" name="nome" placeholder="Seu nome completo" required>
+    <input type="email" name="email" placeholder="Seu e-mail" required>
+    <input type="tel" name="telefone" placeholder="Telefone / WhatsApp" required>
+    
+    <select name="assunto" required>
+        <option value="" disabled selected>Assunto</option>
+        <option>Defesa Criminal</option>
+        <option>Habeas Corpus</option>
+        <option>Tribunal do Júri</option>
+        <option>Execução Penal</option>
+        <option>Consulta Jurídica</option>
+        <option>Outro</option>
+    </select>
+    
+    <textarea name="mensagem" placeholder="Descreva brevemente o seu caso (mantemos total sigilo)" required></textarea>
+    
+    <button type="submit">Enviar Mensagem</button>
+</form>
+
+<script>
+document.getElementById('formContato').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const dados = Object.fromEntries(formData.entries());
+
+    try {
+        const resposta = await fetch('/api/contato', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        });
+
+        const resultado = await resposta.json();
+
+        if (resultado.sucesso) {
+            alert(resultado.mensagem);
+            this.reset();
+        } else {
+            alert(resultado.erro || 'Erro ao enviar mensagem.');
+        }
+    } catch (erro) {
+        alert('Erro de conexão. Tente novamente.');
+        console.error(erro);
+    }
+});
+</script>
